@@ -1,0 +1,156 @@
+
+
+
+Nome do site: GridRH
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matriz</title>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<style>
+
+    .card{
+        top: 32vh;
+        width: 30%;
+        left:35vw;
+        border-radius: 25px;
+        background-color: #ffffff61;
+        border:1px solid #c9c5c5;
+    }
+
+    .matriz {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 30vh;
+        font-family: Patua One, sans-serif;
+        font-size: 20px;
+    }
+
+    table {
+        border-collapse: collapse;
+    }
+
+    td {
+        width: 100px;
+        height: 50px;
+        text-align: center;
+        border-left: 1px solid black;
+        border-right: 1px solid black;
+        position: relative;
+    }
+
+    td:not(:first-child) {
+        border-left: none;
+    }
+
+    td:not(:last-child) {
+        border-right: none;
+    }
+
+    td:before {
+        /* content: '|'; */
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        color: black;
+    }
+
+    td:last-child:before {
+        display: none;
+    }
+</style>
+</head>
+<body>
+<div class ='card'>
+    <div class ='card-body'>
+        <div class ='caixa d-flex flex-column justify-content-center align-items-center'> 
+        <div class="matriz">
+            <table id="matriz"></table>
+        </div> 
+    </div>
+        <button class='btn btn-success'> <a href = 'index.php' style ='color: white;'> Voltar </a> </button>
+    </div>
+</div>
+                        
+<script>
+    // Definindo os dados da matriz
+    
+
+    var matriz = [
+        <?php
+        include_once('conectar_mat.php');
+        session_start();
+
+        $funcionario = $_POST['nome'];
+        $number = $_POST['identificacao'];
+
+        if (isset($_POST['nome']) && isset($_POST['identificacao'])) {
+
+            $sql = "SELECT * FROM tb_funcionarios WHERE nome = '".$funcionario."' AND identificacao = '".$number."'";
+            $result = $conn->query($sql);
+
+            if ($result->num_rows > 0) {
+         
+                    while($row = $result->fetch_assoc()) { 
+                        
+                                echo "<tr>";
+                                echo "<td>Nome</td>";
+                                echo "<td>".$row["nome"]."</td>";
+                                echo "</tr>";
+                                echo "<tr>";
+                                echo "<td>Cargo</td>";
+                                echo "<td>".$row["cargo"]."</td>";
+                                echo "</tr>";
+                                echo "<tr>";
+                                echo "<td>Número</td>";
+                                echo "<td>".$row["identificacao"]."</td>";
+                                echo "</tr>";
+                                echo "<tr>";
+                                echo "<td>Nascimento</td>";
+                                echo "<td>".$row["data_nasc"]."</td>";
+                                echo "</tr>";
+
+                }
+                              
+
+
+            } else {
+                echo "['', 'Usuário ou Senha inválidos ".$number."'],";
+                echo " <button class='btn btn-success'><a href = 'index.php' style ='color: white;' >  Voltar </a> </button>";
+            }
+        }
+        ?>
+
+    ];
+        
+
+    // Função para criar e exibir a matriz na página
+    function criarMatriz() {
+        var tabela = document.getElementById('matriz');
+
+        for (var i = 0; i < matriz.length; i++) {
+            var linha = document.createElement('tr');
+
+            for (var j = 0; j < matriz[i].length; j++) {
+                var celula = document.createElement('td');
+                celula.textContent = matriz[i][j];
+                linha.appendChild(celula);
+            }
+
+            tabela.appendChild(linha);
+        }
+    }
+
+    // Chamando a função para criar a matriz
+    
+    criarMatriz();
+
+</script>
+</body>
+</html>
